@@ -63,7 +63,7 @@
         var Q = window.ggMod.Q;
 
         var body = a.body;
-        var force = 5 * body.Xb;
+        var force = 35 * body.Xb;
         var angle = .35 * Math.PI;
 
         var impulse = E(
@@ -124,7 +124,7 @@
         _boostCooldown = new Am(
             { uy: 0 },
             { uy: 1 },
-            2200,
+            4400,
             Hc
         );
 
