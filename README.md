@@ -1,1 +1,1 @@
-# garden-gnomes-google
+# Google Garden Gnomes
