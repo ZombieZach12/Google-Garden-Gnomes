@@ -10,20 +10,44 @@
     var _boostLoaded = false;
     var _diveElement = null;
 
+    function _waitForGame() {
+        if (
+            !window.ggMod ||
+            !window.ggMod.sr ||
+            !window.ggMod.E ||
+            !window.ggMod.Q ||
+            !window.ggMod.Am ||
+            !window.ggMod.Hc ||
+            !window.ggMod.Bi ||
+            !window.ggMod.Ci ||
+            !window.ggMod.Co ||
+            !window.ggMod.Do
+        ) {
+            setTimeout(_waitForGame, 100);
+            return;
+        }
+
+        _makeBoostButton();
+    }
+
     function _aim() {
-        var g = sr.R;
+        var g = window.ggMod.sr;
+
         if (!g) return null;
 
-        var world = g.yo || (g.i && g.i.cq);
-        var cont = g.i;
+        var world = g.R && (g.R.yo || (g.R.i && g.R.i.cq));
+        var cont = g.R && g.R.i;
 
         if (!world || !cont) return null;
 
-        var src = g.H && g.H.Eo ? g.H.Eo.body : null;
+        var src = g.R.H && g.R.H.Eo
+            ? g.R.H.Eo.body
+            : null;
+
         if (!src) return null;
 
         return {
-            game: g,
+            game: g.R,
             world: world,
             cont: cont,
             body: src
@@ -32,7 +56,11 @@
 
     function _boost() {
         var a = _aim();
+
         if (!a || !a.body) return false;
+
+        var E = window.ggMod.E;
+        var Q = window.ggMod.Q;
 
         var body = a.body;
         var force = 5 * body.Xb;
@@ -44,6 +72,7 @@
         );
 
         body.wq(impulse, Q(body));
+
         return true;
     }
 
@@ -64,15 +93,22 @@
             return;
         }
 
+        var Bi = window.ggMod.Bi;
+
         _boostCanvas = document.createElement("canvas");
 
         _boostCanvas.width = Bi[3];
         _boostCanvas.height = Bi[4];
 
-        _boostCanvas.style.width = _boostCanvas.width / 2 + "px";
-        _boostCanvas.style.height = _boostCanvas.height / 2 + "px";
+        _boostCanvas.style.width =
+            _boostCanvas.width / 2 + "px";
 
-        _boostCanvas.className = "dive-button gnome-button";
+        _boostCanvas.style.height =
+            _boostCanvas.height / 2 + "px";
+
+        _boostCanvas.className =
+            "dive-button gnome-button";
+
         _boostCanvas.id = "gg-boost-button";
 
         _boostCanvas.style.position = "absolute";
@@ -81,6 +117,9 @@
         _boostCanvas.style.zIndex = "999999";
 
         _boostCtx = _boostCanvas.getContext("2d");
+
+        var Am = window.ggMod.Am;
+        var Hc = window.ggMod.Hc;
 
         _boostCooldown = new Am(
             { uy: 0 },
@@ -95,15 +134,23 @@
             _boostLoaded = true;
         };
 
-        _boostImage.src = "logos/2018/gnomes/boost.png";
+        _boostImage.src =
+            "logos/2018/gnomes/boost.png";
 
         function doBoost(ev) {
             ev.preventDefault();
             ev.stopPropagation();
             ev.stopImmediatePropagation();
 
-            if (!_boostCanvas.classList.contains("shown")) return;
-            if (null !== _boostCooldown.i) return;
+            if (
+                !_boostCanvas.classList.contains("shown")
+            ) {
+                return;
+            }
+
+            if (null !== _boostCooldown.i) {
+                return;
+            }
 
             if (_boost()) {
                 _boostCooldown.start();
@@ -119,95 +166,101 @@
 
         root.appendChild(_boostCanvas);
 
-        function _syncVisibility() {
-            if (!_boostCanvas || !_diveElement) return;
+        _boostCanvas.classList.remove("shown");
+        _boostCanvas.classList.remove("disabled");
 
-            if (_diveElement.classList.contains("shown")) {
-                _boostCanvas.classList.add("shown");
-            } else {
-                _boostCanvas.classList.remove("shown");
-            }
+        _drawBoostButton();
+    }
 
-            if (
-                !_diveElement.classList.contains("shown") &&
-                null === _boostCooldown.i
-            ) {
-                _boostCanvas.classList.remove("disabled");
-            }
+    function _syncVisibility() {
+        if (!_boostCanvas || !_diveElement) {
+            return;
         }
 
-        function _drawBoostButton() {
-            if (!_boostCanvas) return;
+        if (_diveElement.classList.contains("shown")) {
+            _boostCanvas.classList.add("shown");
+        } else {
+            _boostCanvas.classList.remove("shown");
+        }
 
-            _syncVisibility();
+        if (
+            !_diveElement.classList.contains("shown") &&
+            null === _boostCooldown.i
+        ) {
+            _boostCanvas.classList.remove("disabled");
+        }
+    }
 
-            if (_boostCooldown.wv()) {
-                _boostCooldown.reset();
-                _boostCanvas.classList.remove("disabled");
-            }
+    function _drawBoostButton() {
+        if (!_boostCanvas) return;
 
-            var progress = 1;
+        _syncVisibility();
 
-            if (null !== _boostCooldown.i) {
-                progress = _boostCooldown.Co().uy;
-            }
+        if (_boostCooldown.wv()) {
+            _boostCooldown.reset();
+            _boostCanvas.classList.remove("disabled");
+        }
 
-            _boostCtx.clearRect(
+        var progress = 1;
+
+        if (null !== _boostCooldown.i) {
+            progress = _boostCooldown.Co().uy;
+        }
+
+        var Do = window.ggMod.Do;
+        var Ci = window.ggMod.Ci;
+        var Co = window.ggMod.Co;
+
+        _boostCtx.clearRect(
+            0,
+            0,
+            _boostCanvas.width,
+            _boostCanvas.height
+        );
+
+        _boostCtx.save();
+
+        if (progress < 1) {
+            _boostCtx.globalAlpha = .6;
+        }
+
+        if (_boostLoaded) {
+            _boostCtx.drawImage(
+                _boostImage,
                 0,
                 0,
                 _boostCanvas.width,
                 _boostCanvas.height
             );
-
-            _boostCtx.save();
-
-            if (progress < 1) {
-                _boostCtx.globalAlpha = .6;
-            }
-
-            if (_boostLoaded) {
-                _boostCtx.drawImage(
-                    _boostImage,
-                    0,
-                    0,
-                    _boostCanvas.width,
-                    _boostCanvas.height
-                );
-            }
-
-            _boostCtx.beginPath();
-
-            _boostCtx.moveTo(
-                Do[0],
-                Do[1]
-            );
-
-            _boostCtx.arc(
-                Do[0],
-                Do[1],
-                Do[0],
-                -Math.PI / 2,
-                progress * Math.PI * 2 - Math.PI / 2
-            );
-
-            _boostCtx.clip();
-
-            Co.draw(
-                Ci,
-                _boostCtx,
-                Do[0] - Ci[3] / 2,
-                Do[1] - Ci[4] / 2
-            );
-
-            _boostCtx.restore();
-
-            requestAnimationFrame(_drawBoostButton);
         }
 
-        _boostCanvas.classList.remove("shown");
-        _boostCanvas.classList.remove("disabled");
+        _boostCtx.beginPath();
 
-        _drawBoostButton();
+        _boostCtx.moveTo(
+            Do[0],
+            Do[1]
+        );
+
+        _boostCtx.arc(
+            Do[0],
+            Do[1],
+            Do[0],
+            -Math.PI / 2,
+            progress * Math.PI * 2 - Math.PI / 2
+        );
+
+        _boostCtx.clip();
+
+        Co.draw(
+            Ci,
+            _boostCtx,
+            Do[0] - Ci[3] / 2,
+            Do[1] - Ci[4] / 2
+        );
+
+        _boostCtx.restore();
+
+        requestAnimationFrame(_drawBoostButton);
     }
 
     function _positionBoost() {
@@ -217,29 +270,10 @@
         _boostCanvas.style.right = "20px";
     }
 
-    function _waitForGame() {
-        if (
-            typeof sr !== "undefined" &&
-            typeof E !== "undefined" &&
-            typeof Q !== "undefined" &&
-            typeof Am !== "undefined" &&
-            typeof Hc !== "undefined" &&
-            typeof Bi !== "undefined" &&
-            typeof Ci !== "undefined" &&
-            typeof Co !== "undefined" &&
-            typeof Do !== "undefined"
-        ) {
-            _makeBoostButton();
-            _positionBoost();
-        } else {
-            setTimeout(_waitForGame, 100);
-        }
-    }
-
-    _waitForGame();
-
     window.addEventListener(
         "resize",
         _positionBoost
     );
+
+    _waitForGame();
 })();
