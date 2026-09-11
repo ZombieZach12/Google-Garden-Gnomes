@@ -63,7 +63,7 @@
         var Q = window.ggMod.Q;
 
         var body = a.body;
-        var force = 35 * body.Xb;
+        var force = 15 * body.Xb;
         var angle = .35 * Math.PI;
 
         var impulse = E(
